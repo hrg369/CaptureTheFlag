@@ -216,16 +216,99 @@ void Bot::moveToTile()
     currentTile = chosenTile;
 }
 
+class Map
+{
+public:
+    Map();
+    Map(vector<int> *freshWeights);
+    Map(vector<int> *freshWeights, int freshFlagTile, int freshBaseTile);
+
+    vector<int> getTileWeights();
+    void setTileWeights(vector<int> *freshWeights);
+
+    int getTileWeight(int tile);
+    void setTileWeight(int tile, int weight);
+
+    int getFlagTile();
+    void setFlagTile(int tile);
+
+    int getBaseTile();
+    void setBaseTile(int tile);
+
+private:
+    vector<int> weights;
+    int flagTile;
+    int baseTile;
+};
+
+Map::Map()
+{
+    //is this line needed?
+    weights.reserve(100);
+    baseTile = 00;
+    flagTile = 55;
+}
+
+Map::Map(vector<int> *freshWeights)
+{
+    weights = *freshWeights;
+}
+
+Map::Map(vector<int> *freshWeights, int freshFlagTile, int freshBaseTile)
+{
+    weights = *freshWeights;
+    flagTile = freshFlagTile;
+    baseTile = freshBaseTile;
+}
+
+vector<int> Map::getTileWeights()
+{
+    return weights;
+}
+
+void Map::setTileWeights(vector<int> *freshWeights)
+{
+    weights = *freshWeights;
+}
+
+int Map::getTileWeight(int tile)
+{
+    return weights[tile];
+}
+
+void Map::setTileWeight(int tile, int weight)
+{
+    weights[tile] = weight;
+}
+
+int Map::getFlagTile()
+{
+    return flagTile;
+}
+
+void Map::setFlagTile(int tile)
+{
+    flagTile = tile;
+}
+
+int Map::getBaseTile()
+{
+    return baseTile;
+}
+
+void Map::setBaseTile(int tile)
+{
+    baseTile = tile;
+}
+
 int main()
 {
     std::cout << "Hello, World!" << std::endl;
 
+    //comment out for same result for debug
     srand(time(NULL));
 
     Bot *bob = new Bot();
-
-
-
 
     cout << "Bob's location is: " << bob->getCurrentTile() << "\n";
 
