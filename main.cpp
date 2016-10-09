@@ -5,14 +5,101 @@
 
 using namespace std;
 
+class Map
+{
+public:
+    Map();
+    Map(vector<int> freshWeights);
+    Map(vector<int> freshWeights, int freshFlagTile, int freshBaseTile);
+
+    vector<int> getTileWeights();
+    void setTileWeights(vector<int> freshWeights);
+
+    int getTileWeight(int tile);
+    void setTileWeight(int tile, int weight);
+
+    int getFlagTile();
+    void setFlagTile(int tile);
+
+    int getBaseTile();
+    void setBaseTile(int tile);
+
+private:
+    vector<int> *weights;
+    int flagTile;
+    int baseTile;
+};
+
+Map::Map()
+{
+    //is this line needed?
+    weights = new vector<int>;
+    baseTile = 00;
+    flagTile = 55;
+}
+
+Map::Map(vector<int> freshWeights)
+{
+    weights = &freshWeights;
+}
+
+Map::Map(vector<int> freshWeights, int freshFlagTile, int freshBaseTile)
+{
+    *weights = freshWeights;
+    flagTile = freshFlagTile;
+    baseTile = freshBaseTile;
+}
+
+vector<int> Map::getTileWeights()
+{
+    return *weights;
+}
+
+void Map::setTileWeights(vector<int> freshWeights)
+{
+    weights = &freshWeights;
+}
+
+int Map::getTileWeight(int tile)
+{
+    return weights->at(tile);
+}
+
+void Map::setTileWeight(int tile, int weight)
+{
+    weights->at(tile) = weight;
+}
+
+int Map::getFlagTile()
+{
+    return flagTile;
+}
+
+void Map::setFlagTile(int tile)
+{
+    flagTile = tile;
+}
+
+int Map::getBaseTile()
+{
+    return baseTile;
+}
+
+void Map::setBaseTile(int tile)
+{
+    baseTile = tile;
+}
+
 class Bot
 {
 public:
-    Bot();
+    Bot(Map &map);
 
     void update();
     int getCurrentTile();
     vector<int> getMemory();
+    bool hasReachedFlag();
+    bool hasReachedBase();
 
 private:
     int visibility;
@@ -20,6 +107,10 @@ private:
     int chosenTile;
     vector<int> memory;
     vector<int> sight;
+    Map *map;
+
+    bool reachedFlag;
+    bool reachedBase;
 
     void fillSight();
     void chooseTile();
@@ -29,12 +120,15 @@ private:
 
 };
 
-Bot::Bot()
+Bot::Bot(Map &freshMap)
 {
+    reachedBase = false;
+    reachedFlag = false;
     visibility = 1;
     //current grid made of 10 by 10
     currentTile = 00;
     memory.push_back(currentTile);
+    map = &freshMap;
 }
 
 void Bot::update()
@@ -112,7 +206,7 @@ void Bot::chooseTile()
         {
             if (sight[i] == memory[j])
             {
-               //cout << sight[i] << " already visited!";
+                //cout << sight[i] << " already visited!";
                 //remove element as it won't be a choice and is already in memory
                 sight.erase(sight.begin() + i);
                 i--;
@@ -154,27 +248,20 @@ void Bot::chooseTile()
         {
             bestTiles.push_back(sight[i]);
         }
-        //to be removed when weights added
+            /*
+             * Either replace bestTiles[n] or be added to them.
+             * Note: bestTiles[0] will have equal weight to all bestTiles[n].
+             */
+        else if(map->getTileWeight(sight[i]) < map->getTileWeight(bestTiles[0]))
+        {
+            bestTiles.clear();
+            bestTiles.push_back(sight[i]);
+        }
         else
         {
             bestTiles.push_back(sight[i]);
         }
 
-        /*
-         * To be added when tiles have weights,
-         * Either replace bestTiles[n] or be added to them.
-         * Note: bestTiles[0] will have equal weight to all bestTiles[n].
-        else if(sight[i].weight < bestTiles[0].weight)
-        {
-            flush bestTiles,
-            add sight[i]
-        }
-        else
-        {
-            add sight[i]
-        }
-
-        */
     }
     //if no bestTiles, chosenTile remains the same.
     if(bestTiles.size() == 1)
@@ -216,90 +303,7 @@ void Bot::moveToTile()
     currentTile = chosenTile;
 }
 
-class Map
-{
-public:
-    Map();
-    Map(vector<int> *freshWeights);
-    Map(vector<int> *freshWeights, int freshFlagTile, int freshBaseTile);
 
-    vector<int> getTileWeights();
-    void setTileWeights(vector<int> *freshWeights);
-
-    int getTileWeight(int tile);
-    void setTileWeight(int tile, int weight);
-
-    int getFlagTile();
-    void setFlagTile(int tile);
-
-    int getBaseTile();
-    void setBaseTile(int tile);
-
-private:
-    vector<int> weights;
-    int flagTile;
-    int baseTile;
-};
-
-Map::Map()
-{
-    //is this line needed?
-    weights.reserve(100);
-    baseTile = 00;
-    flagTile = 55;
-}
-
-Map::Map(vector<int> *freshWeights)
-{
-    weights = *freshWeights;
-}
-
-Map::Map(vector<int> *freshWeights, int freshFlagTile, int freshBaseTile)
-{
-    weights = *freshWeights;
-    flagTile = freshFlagTile;
-    baseTile = freshBaseTile;
-}
-
-vector<int> Map::getTileWeights()
-{
-    return weights;
-}
-
-void Map::setTileWeights(vector<int> *freshWeights)
-{
-    weights = *freshWeights;
-}
-
-int Map::getTileWeight(int tile)
-{
-    return weights[tile];
-}
-
-void Map::setTileWeight(int tile, int weight)
-{
-    weights[tile] = weight;
-}
-
-int Map::getFlagTile()
-{
-    return flagTile;
-}
-
-void Map::setFlagTile(int tile)
-{
-    flagTile = tile;
-}
-
-int Map::getBaseTile()
-{
-    return baseTile;
-}
-
-void Map::setBaseTile(int tile)
-{
-    baseTile = tile;
-}
 
 int main()
 {
@@ -308,7 +312,28 @@ int main()
     //comment out for same result for debug
     srand(time(NULL));
 
-    Bot *bob = new Bot();
+    vector<int> weights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
+                           0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+                           0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+                           0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+                           0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+                           0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                           0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+
+    Map mapLand(weights);
+
+    mapLand.setTileWeight(10, 1);
+    mapLand.setTileWeight(11, 1);
+    mapLand.setTileWeight(12, 1);
+    mapLand.setTileWeight(13, 1);
+    cout << mapLand.getTileWeight(10);
+    cout << mapLand.getTileWeight(11);
+
+    Bot *bob = new Bot(mapLand);
 
     cout << "Bob's location is: " << bob->getCurrentTile() << "\n";
 
