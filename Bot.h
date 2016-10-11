@@ -20,11 +20,11 @@ public:
 
 private:
     int visibility;
-    int currentTile;
-    int chosenTile;
-    vector<int> memory;
-    vector<int> sight;
-    Map *map;
+    int fCurrentTile;
+    int fChosenTile;
+    vector<int> fMemory;
+    vector<int> fSight;
+    Map *fMap;
 
     bool reachedFlag;
     bool reachedBase;

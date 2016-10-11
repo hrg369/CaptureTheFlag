@@ -22,9 +22,9 @@ public:
     void setBaseTile(int tile);
 
 private:
-    vector<int> *weights;
-    int flagTile;
-    int baseTile;
+    vector<int> *fWeights;
+    int fFlagTile;
+    int fBaseTile;
 };
 
 #endif //CAPTURETHEFLAG_MAP_H

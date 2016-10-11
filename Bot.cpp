@@ -6,15 +6,15 @@
 
 using namespace std;
 
-Bot::Bot(Map &freshMap)
+Bot::Bot(Map &map)
 {
     reachedBase = false;
     reachedFlag = false;
     visibility = 1;
     //current grid made of 10 by 10
-    currentTile = 00;
-    memory.push_back(currentTile);
-    map = &freshMap;
+    fCurrentTile = 00;
+    fMemory.push_back(fCurrentTile);
+    fMap = &map;
 }
 
 void Bot::update()
@@ -28,12 +28,12 @@ void Bot::update()
 
 int Bot::getCurrentTile()
 {
-    return currentTile;
+    return fCurrentTile;
 }
 
 vector<int> Bot::getMemory()
 {
-    return memory;
+    return fMemory;
 }
 
 void Bot::fillSight()
@@ -42,21 +42,21 @@ void Bot::fillSight()
     // conditional statements trim boundaries
     if(visibility == 1)
     {
-        if(currentTile < 90)
+        if(fCurrentTile < 90)
         {
-            sight.push_back(currentTile + 10);
+            fSight.push_back(fCurrentTile + 10);
         }
-        if(currentTile % 10 < 9)
+        if(fCurrentTile % 10 < 9)
         {
-            sight.push_back(currentTile + 01);
+            fSight.push_back(fCurrentTile + 01);
         }
-        if(currentTile > 9)
+        if(fCurrentTile > 9)
         {
-            sight.push_back(currentTile - 10);
+            fSight.push_back(fCurrentTile - 10);
         }
-        if(currentTile % 10 > 0)
+        if(fCurrentTile % 10 > 0)
         {
-            sight.push_back(currentTile - 01);
+            fSight.push_back(fCurrentTile - 01);
         }
     }
 }
@@ -86,20 +86,20 @@ void Bot::chooseTile()
     cout << "\n";
      */
 
-    for(int i = 0; i < sight.size(); i++)
+    for(int i = 0; i < fSight.size(); i++)
     {
-        for (int j = 0; j < memory.size(); j++)
+        for (int j = 0; j < fMemory.size(); j++)
         {
-            if (sight[i] == memory[j])
+            if (fSight[i] == fMemory[j])
             {
                 //cout << sight[i] << " already visited!";
                 //remove element as it won't be a choice and is already in memory
-                sight.erase(sight.begin() + i);
+                fSight.erase(fSight.begin() + i);
                 i--;
 
                 //if erased element was last element
 
-                if (i == sight.size())
+                if (i == fSight.size())
                 {
                     goto finishedMemorySearch;
                 }
@@ -123,54 +123,54 @@ void Bot::chooseTile()
     cout << "\n";
      */
 
-    for(int i = 0; i < sight.size(); i++)
+    for(int i = 0; i < fSight.size(); i++)
     {
         //if the tile seen is not in the grid
-        if(sight[i] < 0)
+        if(fSight[i] < 0)
             continue;
 
         //if no valid candidates to compare with, add tile
         if(bestTiles.size() == 0)
         {
-            bestTiles.push_back(sight[i]);
+            bestTiles.push_back(fSight[i]);
         }
             /*
              * Either replace bestTiles[n] or be added to them.
              * Note: bestTiles[0] will have equal weight to all bestTiles[n].
              */
-        else if(map->getTileWeight(sight[i]) < map->getTileWeight(bestTiles[0]))
+        else if(fMap->getTileWeight(fSight[i]) < fMap->getTileWeight(bestTiles[0]))
         {
             bestTiles.clear();
-            bestTiles.push_back(sight[i]);
+            bestTiles.push_back(fSight[i]);
         }
         else
         {
-            bestTiles.push_back(sight[i]);
+            bestTiles.push_back(fSight[i]);
         }
 
     }
     //if no bestTiles, chosenTile remains the same.
     if(bestTiles.size() == 1)
     {
-        chosenTile = bestTiles.front();
+        fChosenTile = bestTiles.front();
     }
         //Note: this statement may work for both cases, as rand() of 1 is 1.
     else if(bestTiles.size() > 1)
     {
-        chosenTile = bestTiles[rand() % bestTiles.size()];
+        fChosenTile = bestTiles[rand() % bestTiles.size()];
     }
 }
 
 void Bot::addToMemory()
 {
     //this style of memory includes all tiles traversed
-    memory.push_back(chosenTile);
+    fMemory.push_back(fChosenTile);
 
     /*
      * This style of memory includes all tiles traversed AND seen
-    for(int i = 0; i < sight.size(); i++)
+    for(int i = 0; i < fSight.size(); i++)
     {
-        memory.push_back(sight[i]);
+        fMemory.push_back(fSight[i]);
     }
      */
 }
@@ -181,12 +181,12 @@ void Bot::addToMemory()
  */
 void Bot::flushSight()
 {
-    sight.clear();
+    fSight.clear();
 }
 
 void Bot::moveToTile()
 {
-    currentTile = chosenTile;
+    fCurrentTile = fChosenTile;
 }
 
 

@@ -6,59 +6,59 @@ using namespace std;
 Map::Map()
 {
     //is this line needed?
-    weights = new vector<int>;
-    baseTile = 00;
-    flagTile = 55;
+    fWeights = new vector<int>;
+    fBaseTile = 00;
+    fFlagTile = 55;
 }
 
-Map::Map(vector<int> freshWeights)
+Map::Map(vector<int> weights)
 {
-    weights = &freshWeights;
+    fWeights = &weights;
 }
 
-Map::Map(vector<int> freshWeights, int freshFlagTile, int freshBaseTile)
+Map::Map(vector<int> weights, int flagTile, int baseTile)
 {
-    *weights = freshWeights;
-    flagTile = freshFlagTile;
-    baseTile = freshBaseTile;
+    *fWeights = weights;
+    fFlagTile = flagTile;
+    fBaseTile = baseTile;
 }
 
 vector<int> Map::getTileWeights()
 {
-    return *weights;
+    return *fWeights;
 }
 
-void Map::setTileWeights(vector<int> freshWeights)
+void Map::setTileWeights(vector<int> weights)
 {
-    weights = &freshWeights;
+    fWeights = &weights;
 }
 
 int Map::getTileWeight(int tile)
 {
-    return weights->at(tile);
+    return fWeights->at(tile);
 }
 
 void Map::setTileWeight(int tile, int weight)
 {
-    weights->at(tile) = weight;
+    fWeights->at(tile) = weight;
 }
 
 int Map::getFlagTile()
 {
-    return flagTile;
+    return fFlagTile;
 }
 
 void Map::setFlagTile(int tile)
 {
-    flagTile = tile;
+    fFlagTile = tile;
 }
 
 int Map::getBaseTile()
 {
-    return baseTile;
+    return fBaseTile;
 }
 
 void Map::setBaseTile(int tile)
 {
-    baseTile = tile;
+    fBaseTile = tile;
 }
