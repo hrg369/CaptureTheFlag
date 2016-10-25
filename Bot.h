@@ -1,40 +1,55 @@
-//
-// Created by Gaskin on 11/10/2016.
-//
+#ifndef BOT_H
+#define BOT_H
 
-#ifndef CAPTURETHEFLAG_BOT_H
-#define CAPTURETHEFLAG_BOT_H
-#include <vector>
-#include "Map.h"
+#include <string>
+
+
+#include "TwoVector.h"
+#include "Flag.h"
+#include "Base.h"
 
 class Bot
 {
 public:
-    Bot(Map &map);
+	Bot();
+	Bot(TwoVector& position);
 
-    void update();
-    int getCurrentTile();
-    vector<int> getMemory();
-    bool hasReachedFlag();
-    bool hasReachedBase();
+	TwoVector& getPosition();
+	void setPosition( TwoVector& position);
+
+	TwoVector& getVelocity() ;
+	void setVelocity( TwoVector& position);
+
+	int getSpeed() ;
+	void setSpeed(int speed);
+
+	TwoVector& getTarget() ;
+	void setTarget(std::string target);
+
+	void update();
+
+	Flag *getFlag();
+	void setFlag(Flag *flag);
+
+	Base *getBase();
+	void setBase(Base *base);
+
+	int getPoints();
+	void setPoints(int points);
+
+	void setHasFlag(bool flag);
 
 private:
-    int visibility;
-    int fCurrentTile;
-    int fChosenTile;
-    vector<int> fMemory;
-    vector<int> fSight;
-    Map *fMap;
+	TwoVector fPosition;
+	TwoVector fVelocity;
+	TwoVector fTarget;
+	bool fHasFlag;
+	int fSpeed;
+	Flag* fFlag;
+	Base* fBase;
+	int fPoints;
 
-    bool reachedFlag;
-    bool reachedBase;
-
-    void fillSight();
-    void chooseTile();
-    void addToMemory();
-    void flushSight();
-    void moveToTile();
 
 };
 
-#endif //CAPTURETHEFLAG_BOT_H
+#endif // BOT_H
